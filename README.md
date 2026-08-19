@@ -4,7 +4,7 @@
 ## how to use it? heres step by step guide on how i use it
 
 ## Download ngrok from its official site and follow instructions
-for windows:
+### for windows:
 ```bash
 https://dashboard.ngrok.com/get-started/setup/windows
 ```
@@ -26,8 +26,8 @@ ngrok config add-authtoken $YOUR_AUTHTOKEN
 
 after these step 
 
-##how to setup 
-###for linux
+## how to setup 
+### for linux
 ```bash
 git clone https://github.com/Manjil740/confession.git
 cd confession
