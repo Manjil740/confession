@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>something i need to tell you</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500;1,600&family=Caveat:wght@500;600;700&family=Outfit:wght@300;400;500;600&display=swap');
+
+  :root{
+    --bg-deep:   #140d1e;
+    --bg-mid:    #201432;
+    --bg-soft:   #2b1c40;
+    --gold:      #cda15f;
+    --gold-soft: #e3c48a;
+    --rose:      #e8a7b3;
+    --rose-deep: #d47f92;
+    --cream:     #f6ecdd;
+    --muted:     #b7a8c9;
+    --line:      rgba(205,161,95,0.35);
+    --display:   'Cormorant Garamond', serif;
+    --hand:      'Caveat', cursive;
+    --body:      'Outfit', sans-serif;
+  }
+
+  *{ box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+  body{
+    margin:0;
+    background:var(--bg-deep);
+    color:var(--cream);
+    font-family:var(--body);
+    overflow-x:hidden;
+    position:relative;
+  }
+
+  ::selection{ background:var(--rose-deep); color:var(--bg-deep); }
+
+  /* ---------- ambient starfield ---------- */
+  #stars{
+    position:fixed; inset:0; z-index:0; pointer-events:none;
+    background:
+      radial-gradient(ellipse at 20% 10%, rgba(212,127,146,0.10), transparent 55%),
+      radial-gradient(ellipse at 80% 70%, rgba(205,161,95,0.10), transparent 55%);
+  }
+  .star{
+    position:absolute; border-radius:50%;
+    background:var(--gold-soft);
+    opacity:.25;
+    animation:twinkle linear infinite;
+  }
+  @keyframes twinkle{
+    0%,100%{ opacity:.15; transform:scale(1); }
+    50%{ opacity:.9; transform:scale(1.4); }
+  }
+
+  section, header, footer{ position:relative; z-index:1; }
+
+  .wrap{
+    max-width:720px;
+    margin:0 auto;
+    padding:0 28px;
+  }
+
+  /* ---------- reveal on scroll ---------- */
+  .reveal{
+    opacity:0;
+    transform:translateY(28px);
+    transition:opacity .9s ease, transform .9s ease;
+  }
+  .reveal.in{ opacity:1; transform:translateY(0); }
+
+  /* ---------- henna divider ---------- */
+  .divider{ display:flex; justify-content:center; margin:64px 0; }
+  .divider svg{ width:180px; height:40px; overflow:visible; }
+  .divider path{
+    fill:none;
+    stroke:var(--gold);
+    stroke-width:1.4;
+    stroke-linecap:round;
+    stroke-dasharray:400;
+    stroke-dashoffset:400;
+    transition:stroke-dashoffset 1.6s ease;
+    opacity:.75;
+  }
+  .divider.in path{ stroke-dashoffset:0; }
+
+  /* ---------- hero ---------- */
+  .hero{
+    min-height:100svh;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center;
+    padding:40px 24px;
+  }
+  .eyebrow{
+    font-family:var(--hand);
+    color:var(--rose);
+    font-size:clamp(1.1rem, 3vw, 1.4rem);
+    margin-bottom:6px;
+    letter-spacing:.02em;
+  }
+  .hero h1{
+    font-family:var(--display);
+    font-weight:500;
+    font-style:italic;
+    font-size:clamp(2.2rem, 7vw, 4rem);
+    line-height:1.15;
+    margin:0 0 20px;
+    color:var(--cream);
+    min-height:1.4em;
+  }
+  .hero h1 .cursor{
+    display:inline-block;
+    width:2px;
+    background:var(--gold-soft);
+    margin-left:3px;
+    animation:blink 1s step-start infinite;
+  }
+  @keyframes blink{ 50%{ opacity:0; } }
+  .hero p{
+    font-size:clamp(.95rem, 2vw, 1.1rem);
+    color:var(--muted);
+    max-width:420px;
+    margin:0 auto;
+  }
+  .scroll-cue{
+    margin-top:56px;
+    font-family:var(--hand);
+    font-size:1.1rem;
+    color:var(--gold-soft);
+    display:flex; flex-direction:column; align-items:center; gap:8px;
+    animation:float 2.4s ease-in-out infinite;
+  }
+  @keyframes float{ 0%,100%{ transform:translateY(0);} 50%{ transform:translateY(10px);} }
+  .scroll-cue span{ font-size:1.4rem; }
+
+  /* ---------- generic section heading ---------- */
+  .eyebrow-small{
+    font-family:var(--hand);
+    color:var(--rose);
+    font-size:1.15rem;
+    margin-bottom:4px;
+  }
+  h2{
+    font-family:var(--display);
+    font-weight:500;
+    font-style:italic;
+    font-size:clamp(1.8rem, 5vw, 2.6rem);
+    margin:0 0 22px;
+    color:var(--cream);
+  }
+  section > .wrap > p.lede{
+    color:var(--muted);
+    font-size:1rem;
+    line-height:1.8;
+    margin-bottom:34px;
+  }
+
+  /* ---------- nicknames ---------- */
+  .nick-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(180px,1fr));
+    gap:16px;
+  }
+  .nick-card{
+    background:var(--bg-mid);
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:22px 18px;
+    cursor:pointer;
+    min-height:130px;
+    display:flex; flex-direction:column; justify-content:center;
+    position:relative;
+    overflow:hidden;
+    transition:transform .35s ease, border-color .35s ease;
+  }
+  .nick-card:hover{ transform:translateY(-4px); border-color:var(--gold); }
+  .nick-card .front{
+    font-family:var(--display);
+    font-style:italic;
+    font-size:1.5rem;
+    color:var(--gold-soft);
+    transition:opacity .3s ease;
+  }
+  .nick-card .back{
+    font-size:.9rem;
+    color:var(--muted);
+    line-height:1.5;
+    position:absolute;
+    inset:18px;
+    display:flex; align-items:center;
+    opacity:0;
+    transform:translateY(8px);
+    transition:opacity .3s ease, transform .3s ease;
+  }
+  .nick-card.flipped .front{ opacity:0; }
+  .nick-card.flipped .back{ opacity:1; transform:translateY(0); }
+  .nick-hint{
+    text-align:center;
+    color:var(--muted);
+    font-size:.8rem;
+    margin-top:14px;
+    opacity:.7;
+  }
+
+  /* ---------- height compare ---------- */
+  .height-row{
+    display:flex; align-items:flex-end; justify-content:center;
+    gap:60px;
+    margin:36px 0 14px;
+    min-height:220px;
+  }
+  .height-figure{ text-align:center; }
+  .height-bar{
+    width:38px;
+    margin:0 auto 12px;
+    border-radius:19px;
+    background:linear-gradient(180deg, var(--rose-deep), var(--rose));
+    height:0;
+    transition:height 1.4s cubic-bezier(.2,.9,.25,1);
+  }
+  .height-figure.tall .height-bar{ background:linear-gradient(180deg, var(--gold), var(--gold-soft)); }
+  .height-row.in .height-figure.short .height-bar{ height:150px; }
+  .height-row.in .height-figure.tall .height-bar{ height:210px; }
+  .height-label{ font-family:var(--hand); font-size:1.2rem; color:var(--cream); }
+  .height-sub{ font-size:.8rem; color:var(--muted); }
+
+  /* ---------- little things / fireflies ---------- */
+  .fireflies{
+    position:relative;
+    min-height:340px;
+    margin-top:10px;
+  }
+  .firefly{
+    position:absolute;
+    width:14px; height:14px;
+    border-radius:50%;
+    background:var(--gold-soft);
+    box-shadow:0 0 12px 4px rgba(227,196,138,0.55);
+    cursor:pointer;
+    animation:drift 7s ease-in-out infinite;
+  }
+  @keyframes drift{
+    0%,100%{ transform:translate(0,0); }
+    50%{ transform:translate(10px,-16px); }
+  }
+  .firefly .note{
+    position:absolute;
+    bottom:26px; left:50%;
+    transform:translateX(-50%) scale(.9);
+    width:180px;
+    background:var(--bg-mid);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:10px 12px;
+    font-size:.82rem;
+    line-height:1.4;
+    color:var(--cream);
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .25s ease, transform .25s ease;
+    z-index:5;
+  }
+  .firefly.open .note{ opacity:1; transform:translateX(-50%) scale(1); pointer-events:auto; }
+  .fireflies-hint{ text-align:center; color:var(--muted); font-size:.8rem; opacity:.7; margin-top:6px; }
+
+  /* ---------- story blocks ---------- */
+  .story{
+    background:var(--bg-mid);
+    border:1px solid var(--line);
+    border-radius:20px;
+    padding:30px 26px;
+  }
+  .story p{ line-height:1.85; color:var(--cream); font-size:1rem; margin:0 0 14px; }
+  .story p:last-child{ margin-bottom:0; }
+  .story .tag{
+    font-family:var(--hand);
+    color:var(--rose);
+    font-size:1.15rem;
+    display:block;
+    margin-bottom:10px;
+  }
+
+  /* ---------- things i love list ---------- */
+  .love-list{ display:flex; flex-direction:column; gap:18px; }
+  .love-item{
+    display:flex; gap:16px; align-items:flex-start;
+    padding-bottom:18px;
+    border-bottom:1px solid var(--line);
+  }
+  .love-item:last-child{ border-bottom:none; }
+  .love-mark{
+    font-family:var(--display);
+    font-style:italic;
+    font-size:1.6rem;
+    color:var(--gold);
+    line-height:1;
+    flex:none;
+    padding-top:4px;
+  }
+  .love-item p{ margin:0; color:var(--muted); line-height:1.75; font-size:.98rem; }
+  .love-item strong{ color:var(--cream); font-weight:500; }
+
+  /* ---------- poems ---------- */
+  .poem{
+    margin-bottom:44px;
+  }
+  .poem-title{
+    font-family:var(--hand);
+    color:var(--gold-soft);
+    font-size:1.4rem;
+    margin-bottom:10px;
+    display:block;
+  }
+  .poem p{
+    font-family:var(--display);
+    font-style:italic;
+    font-size:clamp(1.05rem, 2.4vw, 1.25rem);
+    line-height:2;
+    color:var(--cream);
+    margin:0 0 18px;
+  }
+  .poem-yours{
+    border:1.5px dashed var(--line);
+    border-radius:16px;
+    padding:26px 22px;
+    color:var(--muted);
+    font-family:var(--display);
+    font-style:italic;
+    font-size:1.05rem;
+    line-height:1.9;
+    text-align:center;
+  }
+  .poem-yours .label{
+    display:block;
+    font-family:var(--body);
+    font-style:normal;
+    font-size:.75rem;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    color:var(--rose);
+    margin-bottom:12px;
+  }
+
+  /* ---------- confession ---------- */
+  .confession{
+    min-height:100svh;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center;
+    position:relative;
+    overflow:hidden;
+    padding:60px 24px;
+  }
+  .confess-btn{
+    font-family:var(--hand);
+    font-size:1.4rem;
+    background:transparent;
+    color:var(--gold-soft);
+    border:1.5px solid var(--gold);
+    padding:16px 38px;
+    border-radius:999px;
+    cursor:pointer;
+    transition:background .3s ease, color .3s ease, transform .3s ease;
+  }
+  .confess-btn:hover{ background:var(--gold); color:var(--bg-deep); transform:translateY(-3px); }
+  .confess-text{
+    max-width:520px;
+    opacity:0;
+    transform:translateY(20px);
+    transition:opacity 1s ease, transform 1s ease;
+    margin-top:26px;
+  }
+  .confess-text.show{ opacity:1; transform:translateY(0); }
+  .confess-text h3{
+    font-family:var(--display);
+    font-style:italic;
+    font-weight:500;
+    font-size:clamp(1.8rem,5vw,2.6rem);
+    color:var(--rose);
+    margin:0 0 18px;
+    line-height:1.3;
+  }
+  .confess-text p{
+    color:var(--cream);
+    font-size:1.05rem;
+    line-height:1.85;
+    margin:0 0 12px;
+  }
+  .petal{
+    position:fixed;
+    top:-30px;
+    font-size:18px;
+    z-index:2;
+    pointer-events:none;
+    animation:fall linear forwards;
+    color:var(--rose);
+  }
+  @keyframes fall{
+    to{ transform:translateY(110vh) rotate(360deg); opacity:0; }
+  }
+
+  footer{
+    text-align:center;
+    padding:60px 24px 80px;
+    color:var(--muted);
+  }
+  footer .sign{
+    font-family:var(--hand);
+    font-size:1.6rem;
+    color:var(--gold-soft);
+    display:block;
+    margin-top:8px;
+  }
+
+  @media (max-width:480px){
+    .height-row{ gap:34px; }
+    .fireflies{ min-height:300px; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; scroll-behavior:auto !important; }
+  }
+</style>
+</head>
+<body>
+
+<div id="stars"></div>
+
+<!-- ================= HERO ================= -->
+<header class="hero">
+  <div class="eyebrow">a page that took me longer to build than it should have</div>
+  <h1 id="typewriter">&nbsp;<span class="cursor">&nbsp;</span></h1>
+  <p>read this all the way to the end. please. it matters.</p>
+  <div class="scroll-cue"><span>&#8595;</span> keep going</div>
+</header>
+
+<!-- ================= NICKNAMES ================= -->
+<section id="nicknames">
+  <div class="wrap">
+    <div class="eyebrow-small reveal">exhibit a</div>
+    <h2 class="reveal">the names i've been calling you</h2>
+    <p class="lede reveal">it's only been a few weeks and somehow you already have three nicknames. tap each one.</p>
+    <div class="nick-grid reveal">
+      <div class="nick-card" data-back="because you're 5'4 and i'm 6'4, and every time i hand you something you have to look UP. it's a whole event.">
+        <div class="front">shortie</div>
+        <div class="back">because you're 5'4 and i'm 6'4, and every time i hand you something you have to look up. it's a whole event.</div>
+      </div>
+      <div class="nick-card" data-back="i genuinely do not remember the exact context anymore. i just know it made you laugh so hard you couldn't breathe, and it stuck.">
+        <div class="front">floor sniffer</div>
+        <div class="back">i genuinely don't remember the exact context anymore. i just know it made you laugh so hard you couldn't breathe, and it stuck.</div>
+      </div>
+      <div class="nick-card" data-back="your comeback. for the height thing. 'tall'nt dummo,' you said, completely straight-faced, and i've never recovered.">
+        <div class="front">talln't dummo</div>
+        <div class="back">your comeback for the height thing. "tall'nt dummo," you said, completely straight-faced, and i've never recovered.</div>
+      </div>
+    </div>
+    <p class="nick-hint reveal">(tap to see why)</p>
+  </div>
+</section>
+
+<div class="wrap"><div class="divider reveal">
+  <svg viewBox="0 0 180 40"><path d="M5 20 C 40 5, 60 35, 90 20 S 140 5, 175 20"/></svg>
+</div></div>
+
+<!-- ================= HEIGHT ================= -->
+<section id="height">
+  <div class="wrap">
+    <div class="eyebrow-small reveal">exhibit b, visual evidence</div>
+    <h2 class="reveal">a full foot of difference</h2>
+    <p class="lede reveal">for the record, i think it's the funniest and most endearing thing about arguing with you.</p>
+    <div class="height-row reveal">
+      <div class="height-figure short">
+        <div class="height-bar"></div>
+        <div class="height-label">5'4</div>
+        <div class="height-sub">shortie</div>
+      </div>
+      <div class="height-figure tall">
+        <div class="height-bar"></div>
+        <div class="height-label">6'4</div>
+        <div class="height-sub">talln't dummo</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="wrap"><div class="divider reveal">
+  <svg viewBox="0 0 180 40"><path d="M5 20 C 40 35, 60 5, 90 20 S 140 35, 175 20"/></svg>
+</div></div>
+
+<!-- ================= LITTLE THINGS ================= -->
+<section id="little-things">
+  <div class="wrap">
+    <div class="eyebrow-small reveal">exhibit c</div>
+    <h2 class="reveal">little things i never say out loud</h2>
+    <p class="lede reveal">these have been floating around in my head for weeks. tap one.</p>
+    <div class="fireflies reveal" id="fireflies"></div>
+    <p class="fireflies-hint">(there are more of these than i'm willing to admit)</p>
+  </div>
+</section>
+
+<div class="wrap"><div class="divider reveal">
+  <svg viewBox="0 0 180 40"><path d="M5 20 C 40 5, 60 35, 90 20 S 140 5, 175 20"/></svg>
+</div></div>
+
+<!-- ================= NOT EVEN A MONTH ================= -->
+<section id="month">
+  <div class="wrap">
+    <div class="eyebrow-small reveal">timeline</div>
+    <h2 class="reveal">it hasn't even been a month</h2>
+    <div class="story reveal">
+      <span class="tag">and yet</span>
+      <p>it hasn't been more than a month since we started talking, and somehow it already feels like i've known you since forever. that's not a line. i genuinely sat with that thought and it kind of scared me, how easy it's been.</p>
+      <p>you're one of the smartest people i've talked to, and also one of the kindest, and usually people are only ever one of those two things. you're both, at the same time, without even trying.</p>
+    </div>
+  </div>
+</section>
+
+<div class="wrap"><div class="divider reveal">
+  <svg viewBox="0 0 180 40"><path d="M5 20 C 40 35, 60 5, 90 20 S 140 35, 175 20"/></svg>
+</div></div>
+
+<!-- ================= THAT NIGHT ================= -->
+<section id="that-night">
+  <div class="wrap">
+    <div class="eyebrow-small reveal">the night i knew</div>
+    <h2 class="reveal">the call, after my exam</h2>
+    <div class="story reveal">
+      <span class="tag">3am, probably</span>
+      <p>i remember exactly when this stopped being a small thing. i was on a call with you, completely breaking down because my entrance exam had gone badly, and you just... stayed. you didn't try to fix it or make it smaller than it felt. you just stayed on the line with me until it didn't feel so heavy anymore.</p>
+      <p>that's the night i realized i'd fallen for you. not the big dramatic moment i expected it to be. just you, on the other end of a call, being exactly the kind of person i needed you to be.</p>
+    </div>
+  </div>
+</section>
+
+<div class="wrap"><div class="divider reveal">
+  <svg viewBox="0 0 180 40"><path d="M5 20 C 40 5, 60 35, 90 20 S 140 5, 175 20"/></svg>
+</div></div>
+
+<!-- ================= THINGS I LOVE ================= -->
+<section id="things-i-love">
+  <div class="wrap">
+    <div class="eyebrow-small reveal">the list</div>
+    <h2 class="reveal">everything i've noticed about you</h2>
+    <div class="love-list reveal">
+      <div class="love-item"><span class="love-mark">&#10022;</span><p><strong>you compliment my singing</strong> — even though we both know it's objectively terrible. you say it's good anyway, every single time, and somehow i believe you a little more each time.</p></div>
+      <div class="love-item"><span class="love-mark">&#10022;</span><p><strong>your eyes</strong> — i don't have a clever way to say this. they're just genuinely gorgeous, and i notice them every time.</p></div>
+      <div class="love-item"><span class="love-mark">&#10022;</span><p><strong>the henna you do on your own hands</strong> — the detail in them is unreal. it's such a specific, careful kind of talent and it suits you completely.</p></div>
+      <div class="love-item"><span class="love-mark">&#10022;</span><p><strong>your voice</strong> — smooth and warm in a way that makes even a boring conversation feel like the best part of my day.</p></div>
+      <div class="love-item"><span class="love-mark">&#10022;</span><p><strong>how easily we click</strong> — since the day we met, talking to you has never once felt like work. it just happens.</p></div>
+      <div class="love-item"><span class="love-mark">&#10022;</span><p><strong>your mind</strong> — sharp, quick, kind. an amazing combination that i don't think you even realize is rare.</p></div>
+    </div>
+  </div>
+</section>
+
+<div class="wrap"><div class="divider reveal">
+  <svg viewBox="0 0 180 40"><path d="M5 20 C 40 35, 60 5, 90 20 S 140 35, 175 20"/></svg>
+</div></div>
+
+<!-- ================= POEMS ================= -->
+<section id="poems">
+  <div class="wrap">
+    <div class="eyebrow-small reveal">exhibit d, for the record</div>
+    <h2 class="reveal">a few poems</h2>
+    <p class="lede reveal">i'm not a poet. i just had a lot to say and this felt like the honest way to say it.</p>
+
+    <div class="poem reveal">
+      <span class="poem-title">eyes like that</span>
+      <p>
+        i've run out of quiet ways to say it,<br>
+        so here's the plain one instead —<br>
+        i notice your eyes before anything,<br>
+        long before a single word is said.
+      </p>
+      <p>
+        they hold whole conversations<br>
+        that your mouth hasn't started yet,<br>
+        and i keep replaying them later,<br>
+        a habit i can't seem to forget.
+      </p>
+    </div>
+
+    <div class="poem reveal">
+      <span class="poem-title">3am, falling apart</span>
+      <p>
+        i wasn't looking for anyone<br>
+        the night everything went wrong —<br>
+        you just stayed on the line with me<br>
+        longer than you had to, longer than a normal call is long.
+      </p>
+      <p>
+        no fixing, no easy answers,<br>
+        just your voice, steady and near,<br>
+        and somewhere in that quiet hour<br>
+        is exactly where i landed here.
+      </p>
+    </div>
+
+    <div class="poem reveal">
+      <span class="poem-title">not even a month</span>
+      <p>
+        they say it takes time to know someone,<br>
+        that it should take longer than this —<br>
+        but i've known people for years<br>
+        and felt less than i do with this.
+      </p>
+      <p>
+        so call it fast, call it foolish,<br>
+        i don't mind what it's called —<br>
+        i just know that talking to you<br>
+        is the easiest i've ever fallen.
+      </p>
+    </div>
+
+    <div class="poem-yours reveal">
+      <span class="label">your poem goes here</span>
+      <span id="your-poem-text"> 
+It hasn’t been a month, but feels like years,<br>
+I’m drowning in these happy tears,<br>
+You calm my deepest fears,<br>
+And wipe away my sneers.<br>
+We clicked the very day we met,<br>
+A bond I won’t forget,<br>
+The best thing I’ve gotten yet,<br>
+A life without regret.<br><br>
+
+I’m six-four, you’re five-four,<br>
+I couldn’t ask for more,<br>
+You’re what I’m looking for,<br>
+Opening every door.<br>
+My shortie, my talln’t, my dummo,<br>
+You make my heart go zoom-o,<br>
+My floor sniffer, my promo,<br>
+You light up like a logo.<br><br>
+
+You’re pretty damn smart, it’s true,<br>
+A kind soul through and through,<br>
+Amazing in all you do,<br>
+I’m falling hard for you.<br>
+Your voice is smooth and sweet,<br>
+It slows my racing beat,<br>
+You make my life complete,<br>
+My favorite treat.<br><br>
+
+I sang some absolute shit,<br>
+But you never quit,<br>
+You said I had some wit,<br>
+Even though I missed the hit.<br>
+You praised my terrible song,<br>
+Where I clearly went wrong,<br>
+Right where I belong.<br><br>
+
+That night on the call,<br>
+I felt so small,<br>
+My exam made me fall,<br>
+I hit a wall.<br>
+But you were there for me,<br>
+Set my spirit free,<br>
+Best person I see,<br>
+You mean the world to me.<br><br>
+
+Your eyes are gorgeous, bright,<br>
+A stunning sight,<br>
+They fill me with light,<br>
+Everything is right.<br>
+Your henna tattoos shine,<br>
+I wish you were mine,<br>
+Our stars align,<br>
+Let’s make this divine.<br>
+
+<br><br><br><br><br>
+Those eyes<br><br><br>
+That eye deep, dark, and bright,  <br>
+catches dawn in velvet night.  <br>
+Lashes frame it soft and long,  <br>
+like a whisper, sweet and strong.<br>
+<br>
+Skin glows warm where light falls near,  <br>
+no flaw hides, no mask appears.  <br>
+Brow arches clean, a perfect line  <br>
+nature’s art, divine design.<br>
+<br>
+No need for gloss, no need for paint,  <br>
+it holds the soul, it breaks restraint.  <br>
+One glance and time just slips away,  <br>
+perfection lives in that one gaze.<br>
+<br>
+You don’t need stars to shine so true,  <br>
+your eye alone outshines them all.  <br>
+I’m tired, lost, but still I see  <br>
+you’re the calm inside my storm<br><br>
+ </span>
+    </div>
+  </div>
+</section>
+
+<div class="wrap"><div class="divider reveal">
+  <svg viewBox="0 0 180 40"><path d="M5 20 C 40 5, 60 35, 90 20 S 140 5, 175 20"/></svg>
+</div></div>
+
+<!-- ================= CONFESSION ================= -->
+<section class="confession" id="confession">
+  <div class="eyebrow reveal">last thing, i promise</div>
+  <button class="confess-btn reveal" id="confessBtn">tap here, if you're ready</button>
+  <div class="confess-text" id="confessText">
+    <h3>i like you. a lot, actually.</h3>
+    <p>not even a month in, and you're already the best part of most of my days. your kindness, your mind, your voice, the way you stayed on that call when i needed it most — i've fallen for all of it, quietly and completely.</p>
+    <p>i don't know exactly what you'll do with this page. but i wanted you to know, in the most obvious way i could think of, that i think you're amazing. and i'd really like to see where this goes, if you'd like that too.</p>
+    <p>— from the talln't dummo who can't stop thinking about you</p>
+  </div>
+</section>
+
+<footer>
+  made with way too much thought, at way too late an hour
+  <span class="sign">for you, always.</span>
+</footer>
+
+<script>
+// ---------- starfield ----------
+const starsEl = document.getElementById('stars');
+const STAR_COUNT = window.innerWidth < 600 ? 40 : 70;
+for(let i=0;i<STAR_COUNT;i++){
+  const s = document.createElement('div');
+  s.className='star';
+  const size = Math.random()*2 + 1;
+  s.style.width = size+'px';
+  s.style.height = size+'px';
+  s.style.left = Math.random()*100+'vw';
+  s.style.top = Math.random()*100+'%';
+  s.style.animationDuration = (2 + Math.random()*4)+'s';
+  s.style.animationDelay = (Math.random()*4)+'s';
+  starsEl.appendChild(s);
+}
+
+// ---------- typewriter ----------
+const tw = document.getElementById('typewriter');
+const fullText = "i need to tell you something.";
+let i = 0;
+function type(){
+  if(i <= fullText.length){
+    tw.innerHTML = fullText.slice(0,i) + '<span class="cursor">&nbsp;</span>';
+    i++;
+    setTimeout(type, 55);
+  }
+}
+setTimeout(type, 500);
+
+// ---------- scroll reveal ----------
+const revealEls = document.querySelectorAll('.reveal, .divider, .height-row');
+const io = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){ e.target.classList.add('in'); }
+  });
+},{ threshold:0.2 });
+revealEls.forEach(el=>io.observe(el));
+
+// ---------- nickname flip ----------
+document.querySelectorAll('.nick-card').forEach(card=>{
+  card.addEventListener('click', ()=> card.classList.toggle('flipped'));
+});
+
+// ---------- fireflies ----------
+const messages = [
+  "your laugh might be my favorite sound, no exaggeration.",
+  "i think about our calls way more than i'd admit out loud.",
+  "you make bad days feel a lot more manageable.",
+  "i save the funny things you say to bring up later.",
+  "i genuinely look forward to talking to you every day.",
+  "you're smarter than you give yourself credit for.",
+  "your kindness is not subtle, everyone notices it.",
+  "i like how easily you laugh at your own jokes.",
+  "talking to you feels easy in a way that's rare.",
+  "you've been stuck in my head since the exam call."
+];
+const fireContainer = document.getElementById('fireflies');
+messages.forEach((msg, idx)=>{
+  const f = document.createElement('div');
+  f.className = 'firefly';
+  f.style.left = (8 + Math.random()*84) + '%';
+  f.style.top = (8 + Math.random()*78) + '%';
+  f.style.animationDelay = (Math.random()*4) + 's';
+  f.style.animationDuration = (5 + Math.random()*4) + 's';
+  const note = document.createElement('div');
+  note.className = 'note';
+  note.textContent = msg;
+  f.appendChild(note);
+  f.addEventListener('click', ()=>{
+    document.querySelectorAll('.firefly.open').forEach(o=> o!==f && o.classList.remove('open'));
+    f.classList.toggle('open');
+  });
+  fireContainer.appendChild(f);
+});
+
+// ---------- confession reveal + petals ----------
+const confessBtn = document.getElementById('confessBtn');
+const confessText = document.getElementById('confessText');
+let confessed = false;
+confessBtn.addEventListener('click', ()=>{
+  confessText.classList.add('show');
+  confessBtn.style.display = 'none';
+  if(!confessed){
+    confessed = true;
+    dropPetals();
+  }
+});
+
+function dropPetals(){
+  const petals = ['&#10084;','&#10022;','&#127802;'];
+  let count = 0;
+  const interval = setInterval(()=>{
+    if(count > 45){ clearInterval(interval); return; }
+    count++;
+    const p = document.createElement('div');
+    p.className = 'petal';
+    p.innerHTML = petals[Math.floor(Math.random()*petals.length)];
+    p.style.left = Math.random()*100 + 'vw';
+    p.style.animationDuration = (4 + Math.random()*3) + 's';
+    p.style.fontSize = (14 + Math.random()*10) + 'px';
+    document.body.appendChild(p);
+    setTimeout(()=> p.remove(), 8000);
+  }, 120);
+}
+</script>
+</body>
+</html>
