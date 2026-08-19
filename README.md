@@ -37,7 +37,7 @@ pip3 install flask
 python3 main.py
 ```
 
-###for windows
+### for windows
 #### download the zip file by clicking code or use the clone command
 ```bash
 git clone https://github.com/Manjil740/confession.git
