@@ -49,10 +49,10 @@ pip install flask
 python main.py
 ```
 
-##Then in a different terminal
+## Then in a different terminal
 
 ```bash
 ngrok http 5000
 ```
 
-#Thanks for checking my repo please star it if you like it
+# Thanks for checking my repo please star it if you like it
